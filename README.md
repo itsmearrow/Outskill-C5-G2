@@ -132,5 +132,37 @@ For a deeper dive into the system's design, patterns, and logic, please refer to
 
 ---
 
-## 👥 Developers
-Developed by **Outskills Batch C5 Group 2** using LangGraph, LangChain, and OpenRouter.
+## 👥 Credits
+
+### Developers
+Developed by **Outskills Batch C5 Group 2**:
+1. Arojeet Sengupta
+2. Ravikant Badghaiya
+3. Jayanth P
+4. Abhinav Upadhyay
+5. Mohammed Jameel
+6. Shreya Gupta
+7. Raajesh Kumar
+
+### Mentors and Instructors
+1. Ishan Dutta
+2. King Sidharth
+3. Paras Madan
+4. Srishti Gureja
+5. Dileep Karri
+6. Antaripa Saha
+7. Divij Bajaj
+8. Akhil Alampally
+9. Karthik Mehra
+10. Sham Kulkarni
+
+### Tools and Platforms
+Built using:
+- LangGraph
+- LangChain
+- OpenRouter
+- tavily.com
+- LangSmith
+- Streamlit.io
+- Antigravity
+- Claude Code
