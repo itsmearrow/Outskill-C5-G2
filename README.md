@@ -1,5 +1,7 @@
 # 🔎 Autonomous Research Assistant
 
+**Live Demo:** [🚀 outskill-c5-g2-attempt1.streamlit.app](https://outskill-c5-g2-attempt1.streamlit.app/)
+
 An autonomous research system that searches the web, academic papers, and local documents, evaluates sources, and synthesizes long, multi-step answers. It produces comprehensive, cited reports with a professional UI.
 
 Unlike simple RAG implementations, this agentic system uses **real external APIs** to search the live web and academic databases, and makes dynamic routing decisions to process multi-hop investigations efficiently.
