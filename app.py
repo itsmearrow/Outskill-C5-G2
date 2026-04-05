@@ -152,6 +152,7 @@ with st.sidebar:
     st.markdown("### 🔧 Tech Stack")
     st.markdown("""
 - **Orchestration:** LangGraph
+- **Observability:** LangSmith
 - **LLM:** OpenRouter API
 - **Web Search:** Tavily
 - **Academic:** ArXiv

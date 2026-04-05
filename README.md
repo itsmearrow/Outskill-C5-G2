@@ -2,6 +2,8 @@
 
 **Live Demo:** [🚀 outskill-c5-g2-attempt1.streamlit.app](https://outskill-c5-g2-attempt1.streamlit.app/)
 
+**LangSmith Agent Trace Dashboard:** [📊 View Live Multi-Agent Trace](https://smith.langchain.com/o/61e19ebd-9d92-4671-9643-91e677fcf228/dashboards/projects/abbe4f82-712c-4a96-a849-09515d63eb98)
+
 An autonomous research system that searches the web, academic papers, and local documents, evaluates sources, and synthesizes long, multi-step answers. It produces comprehensive, cited reports with a professional UI.
 
 Unlike simple RAG implementations, this agentic system uses **real external APIs** to search the live web and academic databases, and makes dynamic routing decisions to process multi-hop investigations efficiently.
@@ -44,6 +46,13 @@ To run the application locally on your machine:
    uv run streamlit run app.py
    ```
    The app will be available at `http://localhost:8501`.
+
+### Running Tests
+To run the automated validation suite locally:
+```bash
+uv run pytest tests/ -v
+```
+See our [Testing Guide](tests/TESTS.md) for complete details on UI and system integration coverage.
 
 ### Streamlit Community Cloud (Deployment)
 To deploy this agent to the **Streamlit Community Cloud**:
@@ -109,6 +118,8 @@ For a deeper dive into the system's design, patterns, and logic, please refer to
 - [Core Logic Component](core/CORE.md) — Core application execution mechanics.
 - [LLM Integrations](llm/LLM.md) — AI model configurations and routing.
 - [Tools Configuration](tools/TOOLS.md) — Tool abstractions for the Retrieval system.
+- [Features Guide](FEATURES.md) — Detailed list of tool features, integrations, and customization options.
+- [Testing Guide](tests/TESTS.md) — Overview of the automated testing suite and methodologies.
 
 ---
 

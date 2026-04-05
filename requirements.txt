@@ -29,3 +29,9 @@ tiktoken>=0.7.0
 
 # Linux / Streamlit Cloud Compatibility
 pysqlite3-binary>=0.5.0; sys_platform == "linux"
+
+# Observability
+langsmith>=0.1.0
+
+# Testing
+pytest>=8.0.0
