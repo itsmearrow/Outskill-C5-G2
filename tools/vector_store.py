@@ -70,6 +70,7 @@ def ingest_pdf_to_chroma(uploaded_file) -> Dict[str, str]:
     Returns:
         Dict with 'status' ("success"/"error") and 'message'
     """
+    tmp_path = None
     try:
         # Write bytes to temp file — PyPDFLoader needs a real path
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
@@ -98,8 +99,6 @@ def ingest_pdf_to_chroma(uploaded_file) -> Dict[str, str]:
         vector_store = get_vector_store()
         vector_store.add_documents(chunks)
 
-        os.unlink(tmp_path)  # Clean up temp file
-
         return {
             "status": "success",
             "message": f"✅ '{uploaded_file.name}' — {len(chunks)} chunks stored in ChromaDB.",
@@ -108,6 +107,9 @@ def ingest_pdf_to_chroma(uploaded_file) -> Dict[str, str]:
 
     except Exception as e:
         return {"status": "error", "message": f"❌ Ingestion failed: {str(e)}"}
+    finally:
+        if tmp_path and os.path.exists(tmp_path):
+            os.unlink(tmp_path)
 
 
 # ─────────────────────────────────────────────

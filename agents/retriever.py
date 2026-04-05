@@ -32,7 +32,7 @@ TOOL_REGISTRY: Dict[str, Callable] = {
 }
 
 
-def _execute_single_tool(tool_name: str, query: str, sub_query_context: str) -> List[Dict[str, str]]:
+def _execute_single_tool(tool_name: str, query: str, sub_query_context: str, api_keys: Dict[str, str] = None) -> List[Dict[str, str]]:
     """
     Execute one tool for one sub-query. Returns list of document dicts.
 
@@ -51,7 +51,11 @@ def _execute_single_tool(tool_name: str, query: str, sub_query_context: str) -> 
 
     try:
         print(f"[Retriever] Calling {tool_name} for: '{query}'")
-        results = tool_fn.invoke(query)  # LangChain @tool uses .invoke()
+        
+        if tool_name == "tavily_web_search" and api_keys and "tavily" in api_keys:
+            results = tool_fn.invoke({"query": query, "api_key": api_keys["tavily"]})
+        else:
+            results = tool_fn.invoke(query)  # LangChain @tool uses .invoke()
 
         # Normalize results — each tool returns List[Dict[source, content]]
         enriched = []
@@ -75,7 +79,7 @@ def _execute_single_tool(tool_name: str, query: str, sub_query_context: str) -> 
         }]
 
 
-def _execute_routed_sub_query(route: SubQueryRoute) -> List[Dict[str, str]]:
+def _execute_routed_sub_query(route: SubQueryRoute, api_keys: Dict[str, str] = None) -> List[Dict[str, str]]:
     """
     Execute ALL prescribed tools for ONE sub-query, in parallel if multiple tools.
     
@@ -95,14 +99,14 @@ def _execute_routed_sub_query(route: SubQueryRoute) -> List[Dict[str, str]]:
 
     if len(tools) == 1:
         # Single tool — no parallelism needed, call directly
-        return _execute_single_tool(tools[0], sub_query, sub_query)
+        return _execute_single_tool(tools[0], sub_query, sub_query, api_keys)
 
     # Multiple tools — fire them in parallel using threads
     # Analogy: Like sending multiple scouts in different directions simultaneously
     all_results = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=len(tools)) as executor:
         futures = {
-            executor.submit(_execute_single_tool, tool_name, sub_query, sub_query): tool_name
+            executor.submit(_execute_single_tool, tool_name, sub_query, sub_query, api_keys): tool_name
             for tool_name in tools
         }
         for future in concurrent.futures.as_completed(futures):
@@ -134,6 +138,7 @@ def retriever_node(state: ResearchState, llm: ChatOpenAI) -> ResearchState:
         Updated state with raw_documents populated
     """
     routing_plan = state.get("routing_plan", [])
+    api_keys = state.get("api_keys", {})
 
     if not routing_plan:
         print("[Retriever] No routing plan found — falling back to full query web search.")
@@ -148,7 +153,7 @@ def retriever_node(state: ResearchState, llm: ChatOpenAI) -> ResearchState:
     all_documents = []
     for i, route in enumerate(routing_plan):
         print(f"\n[Retriever] ── Sub-query {i+1}/{len(routing_plan)} ──")
-        docs = _execute_routed_sub_query(route)
+        docs = _execute_routed_sub_query(route, api_keys)
         all_documents.extend(docs)
         print(f"[Retriever] Sub-query {i+1} total docs: {len(docs)}")
 

@@ -43,6 +43,7 @@ class ResearchState(TypedDict):
         final_report    : Final structured Markdown report
         current_agent   : Active node name (for UI progress tracking)
         error           : Optional error message
+        api_keys        : Dict containing tool API keys (e.g., tavily)
     """
     user_query: str
     sub_queries: List[str]
@@ -53,3 +54,4 @@ class ResearchState(TypedDict):
     final_report: str
     current_agent: str
     error: Optional[str]
+    api_keys: Dict[str, str]

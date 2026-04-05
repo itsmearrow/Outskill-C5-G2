@@ -22,7 +22,7 @@ from tavily import TavilyClient
 
 
 @tool
-def tavily_web_search(query: str) -> List[Dict[str, str]]:
+def tavily_web_search(query: str, api_key: str = "") -> List[Dict[str, str]]:
     """
     Search the live web using Tavily Search API.
     
@@ -32,16 +32,18 @@ def tavily_web_search(query: str) -> List[Dict[str, str]]:
     
     Args:
         query: A focused, specific search query (under 200 chars works best)
+        api_key: The user's Tavily API key from the frontend
     
     Returns:
         List of dicts with 'source' (URL) and 'content' (extracted text snippet)
     """
-    api_key = os.environ.get("TAVILY_API_KEY")
-    if not api_key:
+    # Use explicitly passed key first to avoid race conditions in multi-user environments
+    resolved_api_key = api_key or os.environ.get("TAVILY_API_KEY")
+    if not resolved_api_key:
         return [{"source": "error", "content": "TAVILY_API_KEY not set. Add it in the sidebar."}]
 
     try:
-        client = TavilyClient(api_key=api_key)
+        client = TavilyClient(api_key=resolved_api_key)
         response = client.search(
             query=query,
             search_depth="advanced",

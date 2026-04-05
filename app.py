@@ -258,8 +258,10 @@ if not keys_missing:
             st.warning("⚠️ Please enter a research question before running.")
             st.stop()
 
-        # Push keys to environment for tool functions (they read os.environ)
-        os.environ["TAVILY_API_KEY"] = st.session_state.tavily_key
+        # Push keys into the pipeline state instead of global os.environ
+        api_keys = {
+            "tavily": st.session_state.tavily_key,
+        }
 
         # ── INITIAL STATE ─────────────────────────────────────────────────────
         initial_state: ResearchState = {
@@ -272,6 +274,7 @@ if not keys_missing:
             "final_report":   "",
             "current_agent":  "Initializing...",
             "error":          None,
+            "api_keys":       api_keys,
         }
 
         # ── AGENT DISPLAY CONFIG ──────────────────────────────────────────────
