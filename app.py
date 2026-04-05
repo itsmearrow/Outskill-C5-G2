@@ -23,6 +23,8 @@ from core.state import ResearchState
 from tools.vector_store import ingest_pdf_to_chroma
 from llm.openrouter import AVAILABLE_MODELS
 import time
+import re
+import datetime
 from dotenv import load_dotenv
 
 # Load environment variables from .env if present
@@ -72,6 +74,15 @@ def get_safe_secret(key, default=""):
     
     # Fallback to os.environ (local .env file)
     return os.getenv(key, default)
+
+# ─────────────────────────────────────────────
+# LANGSMITH TRACING SETUP (Streamlit Cloud Compatibility)
+# ─────────────────────────────────────────────
+_langsmith_api_key = get_safe_secret("LANGCHAIN_API_KEY")
+if _langsmith_api_key:
+    os.environ["LANGCHAIN_TRACING_V2"] = "true"
+    os.environ["LANGCHAIN_API_KEY"] = _langsmith_api_key
+    os.environ["LANGCHAIN_PROJECT"] = get_safe_secret("LANGCHAIN_PROJECT", "Autonomous-Research")
 
 if "openrouter_key" not in st.session_state:
     st.session_state.openrouter_key = get_safe_secret("OPENROUTER_API_KEY", "")
@@ -393,6 +404,7 @@ if not keys_missing:
                 st.session_state.pipeline_result  = complete_state
                 st.session_state.last_query       = user_query.strip()
                 st.session_state.pipeline_elapsed = pipeline_elapsed  # ← persist
+                st.session_state.report_timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
             except Exception as e:
                 st.error(f"Final assembly failed: {str(e)}")
                 st.stop()
@@ -443,11 +455,21 @@ if not keys_missing:
                 st.markdown("")
 
                 dl_col1, dl_col2 = st.columns([2, 1])
+                
+                # Generate safe and meaningful filename
+                safe_query = re.sub(r'[^a-zA-Z0-9\s]', '', st.session_state.last_query).strip()
+                # Max 50 chars total. "research_" (9) + "_YYYYMMDD_HHMMSS.txt" (20) means query can be at most 21.
+                safe_query = re.sub(r'\s+', '_', safe_query)[:20].strip('_')
+                if not safe_query:
+                    safe_query = "report"
+                timestamp = st.session_state.get("report_timestamp", datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
+                base_filename = f"research_{safe_query}_{timestamp}"
+
                 with dl_col1:
                     st.download_button(
                         label="⬇️ Download Report as Markdown",
                         data=final_report,
-                        file_name=f"research_{st.session_state.last_query[:35].replace(' ', '_')}.md",
+                        file_name=f"{base_filename}.md",
                         mime="text/markdown",
                         use_container_width=True,
                     )
@@ -456,7 +478,7 @@ if not keys_missing:
                     st.download_button(
                         label="📋 Download as .txt",
                         data=final_report,
-                        file_name=f"research_{st.session_state.last_query[:35].replace(' ', '_')}.txt",
+                        file_name=f"{base_filename}.txt",
                         mime="text/plain",
                         use_container_width=True,
                     )
