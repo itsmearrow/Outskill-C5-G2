@@ -103,7 +103,7 @@ OPENROUTER_MODEL=meta-llama/llama-3.2-3b-instruct:free
 For a deeper dive into the system's design, patterns, and logic, please refer to the following guides:
 - [System Architecture](ARCHITECTURE.md) — High-level system design, security, and deployment workflows.
 - [Code Guide](CODE.md) — LangGraph orchestration patterns, state design, and tool integrations.
-- [Agents Guide](agents/agents.md) — Topology, responsibilities, and visual flows for all specialized agents.
+- [Agents Guide](agents/Agents.md) — Topology, responsibilities, and visual flows for all specialized agents.
 - [Core Logic Component](core/CORE.md) — Core application execution mechanics.
 - [LLM Integrations](llm/LLM.md) — AI model configurations and routing.
 - [Tools Configuration](tools/TOOLS.md) — Tool abstractions for the Retrieval system.
