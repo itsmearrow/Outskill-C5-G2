@@ -3,7 +3,7 @@
 ## The Agent Topology
 The system utilizes a sequential DAG (Directed Acyclic Graph) orchestrated by LangGraph, where the `ResearchState` object traverses a pipeline of specialized nodes. By compartmentalizing tasks to these single-responsibility agents, the pipeline achieves much higher precision and reliability over generic ReAct logic.
 
-The strict execution order is:
+The strict execution order is as follows:
 `Planner` → `Retriever` → `Analyst` → `Insight Generator` → `Reporter`
 
 ---
